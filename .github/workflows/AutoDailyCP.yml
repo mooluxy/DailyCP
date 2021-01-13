@@ -33,7 +33,7 @@ jobs:
       - name: DIY formdb
         run: |
           # 请根据日志提示的文件名修改此段代码
-          cat>formdb/0a0f4eb0289bad2b61e8d029b47d35c5.json<<EOF
+          cat>formdb/36.json<<EOF
       - name: Run program
         env:
           SCHOOL_NAME: ${{ secrets.SCHOOL_NAME }}
