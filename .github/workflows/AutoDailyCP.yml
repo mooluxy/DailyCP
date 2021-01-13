@@ -30,10 +30,6 @@ jobs:
         run: |
           pip3 install setuptools
           pip3 install -r requirements.txt
-      - name: DIY formdb
-        run: |
-          # 请根据日志提示的文件名修改此段代码
-          cat>formdb/36.json<<EOF
       - name: Run program
         env:
           SCHOOL_NAME: ${{ secrets.SCHOOL_NAME }}
