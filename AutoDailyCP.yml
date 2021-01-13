@@ -1,0 +1,50 @@
+name: AutoDailyCP
+
+on:
+  push:
+    branches:
+      - master
+  watch:
+    types: started
+  schedule:
+    - cron: 0 9 * * * # At 09:00, every day
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: github.event.repository.owner.id == github.event.sender.id
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: Install python3
+        run: |
+          sudo -E apt-get -yqq update
+          sudo -E apt-get -yqq install python3
+      - name: Download DailyCP
+        run: |
+          git clone https://github.com/allinu/FuckDailyCP
+          cp -r ./FuckDailyCP/* ./
+      - name: Install extensions
+        run: |
+          pip3 install setuptools
+          pip3 install -r requirements.txt
+      - name: DIY formdb
+        run: |
+          # 请根据日志提示的文件名修改此段代码
+          cat>formdb/36.json<<EOF
+          [{"wid": "1636", "formWid": "207", "fieldType": 1, "title": "寒假离校时间？", "description": "", "minLength": 1, "sort": "1", "maxLength": 300, "isRequired": 1, "imageCount": -1, "hasOtherItems": 0, "colName": "field001", "value": "2020-12-23 17:30", "minValue": 0.0, "maxValue": 0.0, "isDecimal": true, "fieldItems": []}, {"wid": "1637", "formWid": "207", "fieldType": 1, "title": "家庭住址？", "description": "", "minLength": 1, "sort": "2", "maxLength": 300, "isRequired": 1, "imageCount": -2, "hasOtherItems": 0, "colName": "field002", "value": "河北省/保定市/定兴县", "minValue": 0.0, "maxValue": 0.0, "isDecimal": true, "fieldItems": []}, {"wid": "1638", "formWid": "207", "fieldType": 2, "title": "计划离长方式？（家在长春市的学生选择“无”即可）", "description": "", "minLength": 0, "sort": "3", "maxLength": null, "isRequired": 1, "imageCount": null, "hasOtherItems": 1, "colName": "field003", "value": "", "minValue": 0.0, "maxValue": 0.0, "isDecimal": true, "fieldItems": [{"itemWid": "2924", "content": "飞机", "isOtherItems": 0, "contendExtend": null, "isSelected": null}, {"itemWid": "2925", "content": "火车", "isOtherItems": 0, "contendExtend": null, "isSelected": 1}, {"itemWid": "2926", "content": "汽车", "isOtherItems": 0, "contendExtend": null, "isSelected": null}, {"itemWid": "2927", "content": "无", "isOtherItems": 0, "contendExtend": null, "isSelected": null}, {"itemWid": "2928", "content": "其他", "isOtherItems": 1, "contendExtend": null, "isSelected": null}]}, {"wid": "1639", "formWid": "207", "fieldType": 1, "title": "离长航班/车次/车牌号信息？", "description": "", "minLength": 1, "sort": "4", "maxLength": 300, "isRequired": 1, "imageCount": null, "hasOtherItems": 0, "colName": "field004", "value": "T122", "minValue": 0.0, "maxValue": 0.0, "isDecimal": true, "fieldItems": []}, {"wid": "1640", "formWid": "207", "fieldType": 1, "title": "离长行程座位号？（乘坐私家车请填写“无”）", "description": "", "minLength": 1, "sort": "5", "maxLength": 300, "isRequired": 1, "imageCount": null, "hasOtherItems": 0, "colName": "field005", "value": "四车四号", "minValue": 0.0, "maxValue": 0.0, "isDecimal": true, "fieldItems": []}, {"wid": "1641", "formWid": "207", "fieldType": 1, "title": "预计到家时间？", "description": "", "minLength": 1, "sort": "6", "maxLength": 300, "isRequired": 1, "imageCount": -1, "hasOtherItems": 0, "colName": "field006", "value": "2020-12-24 11:05", "minValue": 0.0, "maxValue": 0.0, "isDecimal": true, "fieldItems": []}, {"wid": "1642", "formWid": "207", "fieldType": 1, "title": "假期联系人姓名？（填写居家期间的监护人信息，一人即可）", "description": "", "minLength": 1, "sort": "7", "maxLength": 300, "isRequired": 1, "imageCount": null, "hasOtherItems": 0, "colName": "field007", "value": "岳新华", "minValue": 0.0, "maxValue": 0.0, "isDecimal": true, "fieldItems": []}, {"wid": "1643", "formWid": "207", "fieldType": 1, "title": "假期联系人联系方式？", "description": "", "minLength": 1, "sort": "8", "maxLength": 300, "isRequired": 1, "imageCount": null, "hasOtherItems": 0, "colName": "field008", "value": "13373023051", "minValue": 0.0, "maxValue": 0.0, "isDecimal": true, "fieldItems": []}, {"wid": "1644", "formWid": "207", "fieldType": 1, "title": "预计返校时间？", "description": "", "minLength": 1, "sort": "9", "maxLength": 300, "isRequired": 1, "imageCount": -1, "hasOtherItems": 0, "colName": "field009", "value": "2021-02-27 14:00", "minValue": 0.0, "maxValue": 0.0, "isDecimal": true, "fieldItems": []}]
+          EOF
+      - name: Run program
+        env:
+          SCHOOL_NAME: ${{ secrets.SCHOOL_NAME }}
+          ACCOUNT: ${{ secrets.SCHOOL_ACCOUNT }}
+          PASSWORD: ${{ secrets.SCHOOL_PASSWORD }}
+          ADDRESS: ${{ secrets.ADDRESS }}
+          SERVER_KEY: ${{ secrets.SERVER_KEY }}
+        run: |
+          python3 DailyCP.py ${SCHOOL_NAME} ${ACCOUNT} ${PASSWORD} ${ADDRESS} $PWD/formdb ${SERVER_KEY}
+      - name: Upload formdb
+        uses: actions/upload-artifact@master
+        with:
+          name: formdb
+          path: formdb
