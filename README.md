@@ -1,4 +1,5 @@
 # [FuckDailyCP](https://github.com/allinu/FuckDailyCP)
+https://gitee.com/Finch1/FuckDailyCP
 #### 简介
 今日校园自动打卡脚本（不局限于健康打卡，包括收集表，通知确认）。
 可以挂服务器上定时自动打卡。
