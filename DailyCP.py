@@ -213,7 +213,9 @@ class DailyCP:
             "schoolTaskWid": schoolTaskWid,
             "form": rows,
             "address": address,
-            "uaIsCpadaily":True
+            "uaIsCpadaily":True,
+            'latitude': 0.0,
+            'longitude': 0.0
         }
         ret = self.request(
             "https://{host}/wec-counselor-collector-apps/stu/collector/submitForm", body)
