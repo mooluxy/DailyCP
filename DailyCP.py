@@ -259,7 +259,7 @@ class DailyCP:
                         return None
 
                     newForm = form
-                    form = json.loads(file.read().decode("utf-8"))
+                    form = json.loads(file.read().decode("utf-8-sig"))
                     for item in newForm:
                         l = find(form, [['title', item['title']], [
                                  'description', item['description']]])
